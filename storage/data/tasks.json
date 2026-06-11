@@ -1,0 +1,33 @@
+{
+  "tasks": {
+    "task_yzsmS1M5KzhAlb0a": {
+      "id": "task_yzsmS1M5KzhAlb0a",
+      "name": "笔记识别_1页_20260611_1251",
+      "category": "note",
+      "fileIds": [
+        "test-123"
+      ],
+      "status": "completed",
+      "progress": 100,
+      "currentStage": "done",
+      "stageProgress": {
+        "preprocess": 100,
+        "ocr": 100,
+        "layout": 100
+      },
+      "retryCount": 0,
+      "createdAt": 1781153500836,
+      "updatedAt": 1781153501034,
+      "result": {
+        "pages": 1,
+        "blocks": [],
+        "statistics": {
+          "totalChars": 0,
+          "handwrittenChars": 0,
+          "printedChars": 0,
+          "avgConfidence": 0
+        }
+      }
+    }
+  }
+}

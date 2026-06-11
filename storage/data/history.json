@@ -1,0 +1,46 @@
+{
+  "records": {
+    "hist_8T2xj9QttB-4OGni": {
+      "id": "hist_8T2xj9QttB-4OGni",
+      "taskId": "task_yzsmS1M5KzhAlb0a",
+      "name": "笔记识别_1页_20260611_1251",
+      "category": "note",
+      "thumbnail": "/category-icons/note.svg",
+      "summary": "共 0 字，印刷为主，置信度 0%",
+      "charCount": 0,
+      "status": "completed",
+      "tags": [],
+      "createdAt": 1781153501035,
+      "lastViewedAt": 1781153501035,
+      "taskSnapshot": {
+        "id": "task_yzsmS1M5KzhAlb0a",
+        "name": "笔记识别_1页_20260611_1251",
+        "category": "note",
+        "fileIds": [
+          "test-123"
+        ],
+        "status": "completed",
+        "progress": 100,
+        "currentStage": "done",
+        "stageProgress": {
+          "preprocess": 100,
+          "ocr": 100,
+          "layout": 100
+        },
+        "retryCount": 0,
+        "createdAt": 1781153500836,
+        "updatedAt": 1781153501034,
+        "result": {
+          "pages": 1,
+          "blocks": [],
+          "statistics": {
+            "totalChars": 0,
+            "handwrittenChars": 0,
+            "printedChars": 0,
+            "avgConfidence": 0
+          }
+        }
+      }
+    }
+  }
+}

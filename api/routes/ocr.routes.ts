@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express';
-import type { ApiResponse, OCRTask, FileCategory, LayoutResult } from '@shared/types.js';
+import type { ApiResponse, OCRTask, FileCategory, LayoutResult, TaskProgress, PaginatedResponse, TaskStatus } from '@shared/types.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import TaskQueueService from '../services/TaskQueueService.js';
 
@@ -19,6 +19,18 @@ const generateTaskName = (fileIds: string[], category: FileCategory): string => 
   return `${base}_${count}页_${dateStr}`;
 };
 
+const taskToProgress = (task: OCRTask | null): TaskProgress | null => {
+  if (!task) return null;
+  return {
+    taskId: task.id,
+    status: task.status,
+    progress: task.progress,
+    currentStage: task.currentStage,
+    stageDetail: task.stageDetail,
+    etaSeconds: undefined,
+  };
+};
+
 router.post(
   '/submit',
   asyncHandler(async (req: Request, res: Response<ApiResponse<OCRTask>>) => {
@@ -35,7 +47,20 @@ router.post(
 );
 
 router.get(
-  '/task/:taskId',
+  '/tasks',
+  asyncHandler(async (req: Request, res: Response<ApiResponse<PaginatedResponse<OCRTask>>>) => {
+    const { status, page, pageSize } = req.query;
+    const result = await TaskQueueService.listTasks({
+      status: status as TaskStatus | undefined,
+      page: page ? Number(page) : undefined,
+      pageSize: pageSize ? Number(pageSize) : undefined,
+    });
+    res.json({ success: true, data: result });
+  }),
+);
+
+router.get(
+  '/tasks/:taskId',
   asyncHandler(async (req: Request, res: Response<ApiResponse<OCRTask | null>>) => {
     const { taskId } = req.params;
     const result = await TaskQueueService.getTask(taskId);
@@ -44,11 +69,56 @@ router.get(
 );
 
 router.get(
-  '/result/:taskId',
-  asyncHandler(async (req: Request, res: Response<ApiResponse<LayoutResult | null>>) => {
+  '/tasks/:taskId/status',
+  asyncHandler(async (req: Request, res: Response<ApiResponse<TaskProgress | null>>) => {
     const { taskId } = req.params;
     const task = await TaskQueueService.getTask(taskId);
-    res.json({ success: true, data: task?.result ?? null });
+    res.json({ success: true, data: taskToProgress(task) });
+  }),
+);
+
+router.get(
+  '/tasks/:taskId/result',
+  asyncHandler(async (req: Request, res: Response<ApiResponse<OCRTask | null>>) => {
+    const { taskId } = req.params;
+    const task = await TaskQueueService.getTask(taskId);
+    res.json({ success: true, data: task });
+  }),
+);
+
+router.post(
+  '/tasks/:taskId/pause',
+  asyncHandler(async (req: Request, res: Response<ApiResponse<OCRTask | null>>) => {
+    const { taskId } = req.params;
+    const result = await TaskQueueService.pauseTask(taskId);
+    res.json({ success: true, data: result });
+  }),
+);
+
+router.post(
+  '/tasks/:taskId/resume',
+  asyncHandler(async (req: Request, res: Response<ApiResponse<OCRTask | null>>) => {
+    const { taskId } = req.params;
+    const result = await TaskQueueService.resumeTask(taskId);
+    res.json({ success: true, data: result });
+  }),
+);
+
+router.post(
+  '/tasks/:taskId/retry',
+  asyncHandler(async (req: Request, res: Response<ApiResponse<OCRTask | null>>) => {
+    const { taskId } = req.params;
+    const result = await TaskQueueService.retryTask(taskId);
+    res.json({ success: true, data: result });
+  }),
+);
+
+router.post(
+  '/tasks/:taskId/cancel',
+  asyncHandler(async (req: Request, res: Response<ApiResponse<OCRTask | null>>) => {
+    const { taskId } = req.params;
+    const result = await TaskQueueService.cancelTask(taskId);
+    res.json({ success: true, data: result });
   }),
 );
 

@@ -16,6 +16,7 @@ export interface TaskQueueProps {
   onTaskClick?: (taskId: string) => void;
   onTaskDelete?: (taskId: string) => void;
   onTaskPause?: (taskId: string) => void;
+  onTaskResume?: (taskId: string) => void;
   onTaskRetry?: (taskId: string) => void;
   onTaskEdit?: (taskId: string) => void;
   onBatchDelete?: (taskIds: string[]) => void;
@@ -52,6 +53,7 @@ export function TaskQueue({
   loading = false,
   onTaskDelete,
   onTaskPause,
+  onTaskResume,
   onTaskRetry,
   onTaskEdit,
   onBatchDelete,
@@ -330,7 +332,7 @@ export function TaskQueue({
               size="sm"
               icon={<Play size={16} />}
               disabled={!hasSelection}
-              onClick={handleBatchPause}
+              onClick={handleBatchResume}
             >
               继续
             </Button>
@@ -401,6 +403,7 @@ export function TaskQueue({
               onSelect={selectMode ? handleToggleSelect : undefined}
               onDelete={onTaskDelete}
               onPause={onTaskPause}
+              onResume={onTaskResume}
               onRetry={onTaskRetry}
               onEdit={onTaskEdit}
             />
@@ -417,6 +420,7 @@ export function TaskQueue({
               onSelect={selectMode ? handleToggleSelect : undefined}
               onDelete={onTaskDelete}
               onPause={onTaskPause}
+              onResume={onTaskResume}
               onRetry={onTaskRetry}
               onEdit={onTaskEdit}
             />

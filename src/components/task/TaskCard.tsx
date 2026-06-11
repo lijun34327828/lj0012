@@ -29,6 +29,7 @@ export interface TaskCardProps {
   onSelect?: (taskId: string, selected: boolean) => void;
   onDelete?: (taskId: string) => void;
   onPause?: (taskId: string) => void;
+  onResume?: (taskId: string) => void;
   onRetry?: (taskId: string) => void;
   onEdit?: (taskId: string) => void;
   className?: string;
@@ -96,6 +97,7 @@ export function TaskCard({
   onSelect,
   onDelete,
   onPause,
+  onResume,
   onRetry,
   onEdit,
   className,
@@ -131,16 +133,16 @@ export function TaskCard({
     onSelect?.(task.id, e.target.checked);
   };
 
-  const handleAction = (action: 'pause' | 'retry' | 'delete' | 'edit') => {
+  const handleAction = (action: 'pause' | 'resume' | 'retry' | 'delete' | 'edit') => {
     setMenuOpen(false);
     switch (action) {
       case 'pause':
-        if (isPaused) {
-          toast.info('任务已恢复');
-        } else {
-          toast.info('任务已暂停');
-        }
+        toast.info('任务已暂停');
         onPause?.(task.id);
+        break;
+      case 'resume':
+        toast.info('任务已恢复');
+        onResume?.(task.id);
         break;
       case 'retry':
         toast.success('正在重新处理任务');
@@ -250,7 +252,7 @@ export function TaskCard({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAction('pause');
+                        handleAction(isPaused ? 'resume' : 'pause');
                       }}
                       className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
                     >
@@ -390,7 +392,7 @@ export function TaskCard({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAction('pause');
+                        handleAction(isPaused ? 'resume' : 'pause');
                       }}
                       className="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
                     >

@@ -193,7 +193,7 @@ export function TaskCenter() {
   const handlePause = useCallback(async (id: string) => {
     try {
       const result = await pauseTask(id);
-      if (result.success) {
+      if (result) {
         updateTask(id, { status: 'paused' });
         stopPolling(id);
         toast.success('已暂停');
@@ -206,7 +206,7 @@ export function TaskCenter() {
   const handleResume = useCallback(async (id: string) => {
     try {
       const result = await resumeTask(id);
-      if (result.success) {
+      if (result) {
         updateTask(id, { status: 'queued' });
         startPolling(id, getTaskStatus);
         toast.success('已恢复');
@@ -509,6 +509,7 @@ export function TaskCenter() {
             loading={loading}
             onTaskDelete={handleDelete}
             onTaskPause={handlePause}
+            onTaskResume={handleResume}
             onTaskRetry={handleRetry}
             onTaskEdit={handleEdit}
             onBatchDelete={handleBatchDelete}
@@ -545,6 +546,9 @@ export function TaskCenter() {
                       }}
                       onPause={(id: string) => {
                         handlePause(id);
+                      }}
+                      onResume={(id: string) => {
+                        handleResume(id);
                       }}
                       onRetry={(id: string) => {
                         handleRetry(id);

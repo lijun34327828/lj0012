@@ -313,42 +313,42 @@ export function listTasks(params?: {
   return get('/ocr/tasks', { params });
 }
 
-export function pauseTask(taskId: string): Promise<{ success: boolean }> {
+export function pauseTask(taskId: string): Promise<OCRTask | null> {
   return post(`/ocr/tasks/${taskId}/pause`);
 }
 
-export function resumeTask(taskId: string): Promise<{ success: boolean }> {
+export function resumeTask(taskId: string): Promise<OCRTask | null> {
   return post(`/ocr/tasks/${taskId}/resume`);
 }
 
-export function retryTask(taskId: string): Promise<OCRTask> {
+export function retryTask(taskId: string): Promise<OCRTask | null> {
   return post(`/ocr/tasks/${taskId}/retry`);
 }
 
-export function cancelTask(taskId: string): Promise<{ success: boolean }> {
+export function cancelTask(taskId: string): Promise<OCRTask | null> {
   return post(`/ocr/tasks/${taskId}/cancel`);
 }
 
-export function deleteTask(taskId: string): Promise<{ success: boolean }> {
+export function deleteTask(taskId: string): Promise<OCRTask | null> {
   return del(`/tasks/${taskId}`);
 }
 
-export function batchDeleteTasks(ids: string[]): Promise<{ deleted: number }> {
+export function batchDeleteTasks(ids: string[]): Promise<{ cancelled: number; tasks: (OCRTask | null)[] }> {
   return del('/tasks/batch', {
     body: JSON.stringify({ ids }) as unknown as BodyInit,
     headers: { 'Content-Type': 'application/json' },
   });
 }
 
-export function batchPauseTasks(ids: string[]): Promise<{ updated: number }> {
+export function batchPauseTasks(ids: string[]): Promise<{ updated: number; tasks: (OCRTask | null)[] }> {
   return post('/tasks/batch-pause', { ids });
 }
 
-export function batchResumeTasks(ids: string[]): Promise<{ updated: number }> {
+export function batchResumeTasks(ids: string[]): Promise<{ updated: number; tasks: (OCRTask | null)[] }> {
   return post('/tasks/batch-resume', { ids });
 }
 
-export function batchRetryTasks(ids: string[]): Promise<{ updated: number }> {
+export function batchRetryTasks(ids: string[]): Promise<{ updated: number; tasks: (OCRTask | null)[] }> {
   return post('/tasks/batch-retry', { ids });
 }
 
@@ -363,7 +363,7 @@ export function saveResult(taskId: string, editedBlocks: Record<string, string>)
   saved: boolean;
   updatedAt: number;
 }> {
-  return post(`/results/${taskId}/save`, { editedBlocks });
+  return put(`/result/${taskId}`, { editedBlocks });
 }
 
 export function listHistory(params?: {

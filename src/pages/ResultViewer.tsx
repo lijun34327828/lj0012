@@ -89,19 +89,21 @@ export function ResultViewer() {
     setLoadingResult(true);
     try {
       const res = await getTaskResult(id);
-      setResult(res.result!);
+      if (!res) {
+        throw new Error('任务不存在');
+      }
+      if (res.result) {
+        setResult(res.result);
+      }
       const updated: OCRTask = {
         ...task,
+        ...res,
         id,
-        status: res.status,
-        result: res.result,
-        stageProgress: task?.stageProgress ?? { preprocess: 0, ocr: 0, layout: 0 },
-        retryCount: task?.retryCount ?? 0,
+        stageProgress: res.stageProgress ?? task?.stageProgress ?? { preprocess: 0, ocr: 0, layout: 0 },
+        retryCount: res.retryCount ?? task?.retryCount ?? 0,
       } as OCRTask;
-      if (task) {
-        setTask(updated);
-        updateTask(id, updated);
-      }
+      setTask(updated);
+      updateTask(id, updated);
     } catch (e: any) {
       if (!task || task.status !== 'failed') {
         // ignore
@@ -121,10 +123,12 @@ export function ResultViewer() {
     if (!confirm('确定要删除此识别任务吗？此操作不可恢复。')) return;
     setDeleting(true);
     try {
-      await cancelTask(task.id);
-      removeTask(task.id);
-      toast.success('任务已删除');
-      navigate('/tasks');
+      const result = await cancelTask(task.id);
+      if (result) {
+        removeTask(task.id);
+        toast.success('任务已删除');
+        navigate('/tasks');
+      }
     } catch (e: any) {
       toast.error(e.message || '删除失败');
     } finally {
@@ -137,10 +141,12 @@ export function ResultViewer() {
     setRetrying(true);
     try {
       const newTask = await retryTask(task.id);
-      addTask(newTask);
-      startPolling(newTask.id, getTaskStatus);
-      toast.success('已重新提交识别');
-      navigate(`/result/${newTask.id}`);
+      if (newTask) {
+        addTask(newTask);
+        startPolling(newTask.id, getTaskStatus);
+        toast.success('已重新提交识别');
+        navigate(`/result/${newTask.id}`);
+      }
     } catch (e: any) {
       toast.error(e.message || '重试失败');
     } finally {
